@@ -66,3 +66,47 @@ Liste todos os containers em execução e parados, pare um container em execuç�
 ### 4.Criando um Dockerfile para uma aplicação simples em Python
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
+
+### Resolução: 
+1. docker pull python
+2. mkdir flask-app
+3. cd flask-app
+4. nano app.py
+5. from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+6. nano requirements.txt
+flask
+7. nano dockerfile 
+# Use uma imagem base oficial do Python
+FROM python:3.9-slim
+
+# Defina o diretório de trabalho no container
+WORKDIR /app
+
+# Copie o arquivo requirements.txt para o container
+COPY requirements.txt .
+
+# Instale as dependências
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copie todo o código da aplicação para dentro do container
+COPY . .
+
+# Exponha a porta 5000
+EXPOSE 5000
+
+# Defina o comando para rodar a aplicação Flask
+CMD ["python", "app.py"]
+8. docker build -t flask-app . 
+9. docker run -d -p 5000:5000 --name flask-container flask-app
+10. abrir o navegador
+11. IP:5000
+
