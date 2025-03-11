@@ -3,7 +3,24 @@
 ## 🟢 Fácil
 ### 1. Rodando um container básico
 Execute um container usando a imagem do Nginx e acesse a página padrão no navegador.
+
 🔹 Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
+
+### Resolução:
+1. docker pull nginx
+2. docker images
+3. mkdir nginx
+4. cd nginx
+5. mkdir html
+6. cd html
+7. nano index.html
+8. colar o conteúdo da landing pafe do TailwindCSS
+9. nano docker file: FROM nginx:latest   COPY index.html /usr/share/nginx/html/index.html
+10. docker run --name nginx -d -p 8080:80 meu-nginx
+11. docker ps
+12. ip a
+13. abrir o navegador
+14. IP:8080
 
 ### 2. Criando e rodando um container interativo
 Inicie um container Ubuntu e interaja com o terminal dele.
