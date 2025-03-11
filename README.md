@@ -58,6 +58,11 @@ CMD ["/bin/bash", "/usr/local/bin/script.sh"]
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
 
+### Resolução: 
+1. docker ps -a
+2. docker stop ubuntu
+3. docker rm ubuntu 
+
 ### 4.Criando um Dockerfile para uma aplicação simples em Python
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
