@@ -144,6 +144,46 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
 
+### Resolução
+1. mkdir go
+2. cd go
+3. docker pull golang
+4. dcoker pull alpine
+5. docker images
+6. nano app.go
+7. package main
+import (
+    "fmt"
+)
+
+func main() {
+  fmt.Println("Qual é o seu nome:? ")
+  var name string
+  fmt.Scanln(&name)
+  fmt.Printf("Oi, %s! Eu sou a linguagem Go! ", name)
+}
+8. nano dockerfile 
+FROM golang as exec
+
+COPY app.go /go/src/app/
+
+ENV GO111MODULE=auto
+
+WORKDIR /go/src/app
+
+RUN go build -o app.go .
+
+FROM alpine
+
+WORKDIR /appexec
+COPY --from=exec /go/src/app/ /appexec
+RUN chmod -R 755 /appexec
+ENTRYPOINT ./app.go
+9. docker image build . -t app-go:1.0
+10. docker images 
+11. o app-go deverá ser listado 
+12. docker run -ti --name meuappOK app-go:1.0
+
 ### 3. Construindo uma rede Docker para comunicação entre containers
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
