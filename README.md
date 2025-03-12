@@ -85,28 +85,30 @@ if __name__ == '__main__':
 6. nano requirements.txt
 flask
 7. nano dockerfile 
-# Use uma imagem base oficial do Python
+Use uma imagem base oficial do Python
 FROM python:3.9-slim
 
-# Defina o diretório de trabalho no container
+Defina o diretório de trabalho no container
 WORKDIR /app
 
-# Copie o arquivo requirements.txt para o container
+Copie o arquivo requirements.txt para o container
 COPY requirements.txt .
 
-# Instale as dependências
+Instale as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie todo o código da aplicação para dentro do container
+Copie todo o código da aplicação para dentro do container
 COPY . .
 
-# Exponha a porta 5000
+Exponha a porta 5000
 EXPOSE 5000
 
-# Defina o comando para rodar a aplicação Flask
+Defina o comando para rodar a aplicação Flask
 CMD ["python", "app.py"]
 8. docker build -t flask-app . 
 9. docker run -d -p 5000:5000 --name flask-container flask-app
 10. abrir o navegador
 11. IP:5000
+
+
 
