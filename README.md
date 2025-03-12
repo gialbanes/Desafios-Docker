@@ -116,6 +116,30 @@ CMD ["python", "app.py"]
 Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
 🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
 
+### Resolução:
+1. docker pull mysql
+2. docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
+3. docker ps
+4. docker exec -it mysql-A mysql -uroot -p
+
+### Testando a resolução anterior
+1. create database teste;
+2. use teste;
+3. create table usuarios (id int primary key, AUTO_INCREMENT, nome varchar(50));
+4. insert into usuarios(nome) values ("Giovana");
+5. exit
+6. docker stop mysql-A
+7. docker rm mysql-A
+8. docker run -d --name mysql-B -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
+9. docker ps
+10. docker exec -it mysql-B mysql -uroot -p
+11. show databases;
+12. use teste;
+13. select * from usuarios;
+
+### Continuação da resolução:
+
+
 ### 2. Criando e rodando um container multi-stage
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
