@@ -111,4 +111,19 @@ CMD ["python", "app.py"]
 11. IP:5000
 
 
+## 🟡 Médio
+### 1. Criando e utilizando volumes para persistência de dados
+Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
+🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
 
+### 2. Criando e rodando um container multi-stage
+Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
+🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
+
+### 3. Construindo uma rede Docker para comunicação entre containers
+Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
+🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
+
+### 4. Criando um compose file para rodar uma aplicação com banco de dados
+Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
+🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
