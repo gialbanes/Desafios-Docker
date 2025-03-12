@@ -140,8 +140,6 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 12. use teste;
 13. select * from usuarios;
 
-### Continuação da resolução:
-
 
 ### 2. Criando e rodando um container multi-stage
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
