@@ -73,42 +73,45 @@ Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessa
 3. cd flask-app
 4. nano app.py
 5. from flask import Flask
+from flask_restful import Api, Resource
 
 app = Flask(__name__)
+api = Api(app)
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+class HelloWorld(Resource):
+    def get(self):
+        return {'message': 'Hello, World!'}
+
+# Adicionando o endpoint /hello
+api.add_resource(HelloWorld, '/hello')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-6. nano requirements.txt
-flask
-7. nano dockerfile 
-Use uma imagem base oficial do Python
+
+6. nano dockerfile 
+Usando a imagem base do Python
 FROM python:3.9-slim
 
 Defina o diretório de trabalho no container
 WORKDIR /app
 
-Copie o arquivo requirements.txt para o container
-COPY requirements.txt .
+Copie o código da aplicação para dentro do container
+COPY app.py .
 
-Instale as dependências
-RUN pip install --no-cache-dir -r requirements.txt
-
-Copie todo o código da aplicação para dentro do container
-COPY . .
+Instale o Flask diretamente no container
+RUN pip install flask
 
 Exponha a porta 5000
 EXPOSE 5000
 
-Defina o comando para rodar a aplicação Flask
+Comando para rodar a aplicação Flask
 CMD ["python", "app.py"]
+
 8. docker build -t flask-app . 
 9. docker run -d -p 5000:5000 --name flask-container flask-app
-10. abrir o navegador
-11. IP:5000
+10. ip a 
+11. abrir o navegador
+12. IP:5000
 
 
 ## 🟡 Médio
