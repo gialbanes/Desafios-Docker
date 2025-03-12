@@ -189,6 +189,96 @@ ENTRYPOINT ./app.go
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
 
+### Resolução:
+1. mkdir node-mongo
+2. cd node-mongo
+3. nano docker-compose.yml
+4. root@docker:~/node-mongo# cat docker-compose.yml
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    networks:
+      - minha-rede
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+    ports:
+      - "27017:27017"
+
+  node:
+    build: ./app-node
+    container_name: node
+    networks:
+      - minha-rede
+    environment:
+      - MONGO_URI=mongodb://root:rootpassword@mongo-container:27017
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+
+networks:
+  minha-rede:
+    driver: bridge
+
+volumes:
+  mongo-data:
+5. mkdir app-node
+6. cd app-node
+7. nano app.js
+import express from "express";
+import mongoose from "mongoose";
+const app = express();
+
+const mongoUri = process.env.MONGO_URI;
+
+mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Conexão com o MongoDB estabelecida!');
+  })
+  .catch(error => {
+    console.log('Conexão com o MongoDB falhou:', error);
+  });
+
+app.get("/", (req, res) => {
+        res.send("Olá! O mini projeto com Node e Mongo funcionou!");
+  });
+
+const port = 3000;
+app.listen(port, (error) => {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log(`API rodando em http://localhost:${port}.`);
+  }
+7. nano dockerfile 
+Usando a imagem base do Node.js
+FROM node:14
+
+Defina o diretório de trabalho
+WORKDIR /app
+
+Copie os arquivos do projeto para o container
+COPY . .
+
+Instale as dependências
+RUN npm install express mongoose
+
+Exponha a porta 3000
+EXPOSE 3000
+
+Defina o comando para rodar o app
+CMD ["node", "server.js"]
+8. docker-compose up -d
+9. ip a 
+10. abrir navegador
+11. ip:3000
+
 ### 4. Criando um compose file para rodar uma aplicação com banco de dados
 Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
