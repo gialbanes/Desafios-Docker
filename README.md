@@ -1,7 +1,7 @@
 # Desafios-Docker
 
 ## 🟢 Fácil
-### 1. Rodando um container básico DEU CERTO 
+### 1. Rodando um container básico DEU CERTO E NÃO PRECISA REVISAR
 Execute um container usando a imagem do Nginx e acesse a página padrão no navegador.
 
 🔹 Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
@@ -25,7 +25,7 @@ Execute um container usando a imagem do Nginx e acesse a página padrão no nave
 15. IP:8080
 ```
 
-### 2. Criando e rodando um container interativo REVISAR
+### 2. Criando e rodando um container interativo DEU CERTO MAS REVISAR
 Inicie um container Ubuntu e interaja com o terminal dele.
 
 🔹 Exemplo de aplicação: Teste um script Bash que imprime logs do sistema ou instala pacotes de forma interativa.
@@ -58,7 +58,7 @@ CMD ["/bin/bash", "/usr/local/bin/script.sh"]
 18. curl --version
 ```
 
-### 3.Listando e removendo containers DEU CERTO 
+### 3.Listando e removendo containers DEU CERTO E NAO PRECISA REVISAR
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
 
@@ -69,7 +69,7 @@ Liste todos os containers em execução e parados, pare um container em execuç�
 3. docker rm ubuntu 
 ```
 
-### 4.Criando um Dockerfile para uma aplicação simples em Python REVISAR
+### 4.Criando um Dockerfile para uma aplicação simples em Python DEU CERTO MAS REVISAR
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
 
@@ -124,7 +124,7 @@ CMD ["python", "app.py"]
 ```
 
 ## 🟡 Médio
-### 1. Criando e utilizando volumes para persistência de dados DEU CERTO 
+### 5. Criando e utilizando volumes para persistência de dados DEU CERTO E NÃO PRECISA REVISAR
 Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
 🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
 
@@ -153,7 +153,7 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 13. select * from usuarios;
 ```
 
-### 2. Criando e rodando um container multi-stage DEU CERTO 
+### 6. Criando e rodando um container multi-stage DEU CERTO E NÃO PRECISA REVISAR
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
 
@@ -204,7 +204,7 @@ ENTRYPOINT ./app.go
 12. docker run -ti --name meuappOK app-go:1.0
 ```
 
-### 3. Construindo uma rede Docker para comunicação entre containers RODOU MAS TEM QUE REVISAR O CÓDIGO
+### 7. Construindo uma rede Docker para comunicação entre containers DEU CERTO MAS TEM QUE REVISAR
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
 
@@ -293,6 +293,6 @@ CMD ["node", "app.js"]
 11. ip:3000
 ```
 
-### 4. Criando um compose file para rodar uma aplicação com banco de dados
+### 8. Criando um compose file para rodar uma aplicação com banco de dados
 Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
