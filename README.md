@@ -1,12 +1,13 @@
 # Desafios-Docker
 
 ## 🟢 Fácil
-### 1. Rodando um container básico
+### 1. Rodando um container básico DEU CERTO 
 Execute um container usando a imagem do Nginx e acesse a página padrão no navegador.
 
 🔹 Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
 
 ### Resolução:
+``` bash
 1. docker pull nginx
 2. docker images
 3. mkdir nginx
@@ -22,13 +23,15 @@ Execute um container usando a imagem do Nginx e acesse a página padrão no nave
 13. ip a
 14. abrir o navegador
 15. IP:8080
+```
 
-### 2. Criando e rodando um container interativo
+### 2. Criando e rodando um container interativo REVISAR
 Inicie um container Ubuntu e interaja com o terminal dele.
 
 🔹 Exemplo de aplicação: Teste um script Bash que imprime logs do sistema ou instala pacotes de forma interativa.
 
 ### Resolução: 
+``` bash
 1. docker pull ubuntu
 2. docker run -it ubuntu bash
 3. apt update
@@ -53,25 +56,31 @@ CMD ["/bin/bash", "/usr/local/bin/script.sh"]
 16. docker exec -it meu-ubuntu bash
 17. /usr/local/bin/script.sh
 18. curl --version
+```
 
-### 3.Listando e removendo containers
+### 3.Listando e removendo containers DEU CERTO 
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
 
 ### Resolução: 
+```bash
 1. docker ps -a
 2. docker stop ubuntu
 3. docker rm ubuntu 
+```
 
-### 4.Criando um Dockerfile para uma aplicação simples em Python
+### 4.Criando um Dockerfile para uma aplicação simples em Python REVISAR
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
 
 ### Resolução: 
+``` bash 
 1. docker pull python
 2. mkdir flask-app
 3. cd flask-app
 4. nano app.py
+```
+```python
 5. from flask import Flask
 from flask_restful import Api, Resource
 
@@ -82,12 +91,12 @@ class HelloWorld(Resource):
     def get(self):
         return {'message': 'Hello, World!'}
 
-# Adicionando o endpoint /hello
 api.add_resource(HelloWorld, '/hello')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
+```
+```bash
 6. nano dockerfile 
 Usando a imagem base do Python
 FROM python:3.9-slim
@@ -112,20 +121,23 @@ CMD ["python", "app.py"]
 10. ip a 
 11. abrir o navegador
 12. IP:5000
-
+```
 
 ## 🟡 Médio
-### 1. Criando e utilizando volumes para persistência de dados
+### 1. Criando e utilizando volumes para persistência de dados DEU CERTO 
 Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
 🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
 
 ### Resolução:
+```bash
 1. docker pull mysql
 2. docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
 3. docker ps
 4. docker exec -it mysql-A mysql -uroot -p
+```
 
 ### Testando a resolução anterior
+```bash
 1. create database teste;
 2. use teste;
 3. create table usuarios (id int primary key, AUTO_INCREMENT, nome varchar(50));
@@ -139,19 +151,23 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 11. show databases;
 12. use teste;
 13. select * from usuarios;
+```
 
-
-### 2. Criando e rodando um container multi-stage
+### 2. Criando e rodando um container multi-stage DEU CERTO 
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
 
 ### Resolução
+```bash
 1. mkdir go
 2. cd go
 3. docker pull golang
 4. dcoker pull alpine
 5. docker images
 6. nano app.go
+```
+
+```go 
 7. package main
 import (
     "fmt"
@@ -163,6 +179,8 @@ func main() {
   fmt.Scanln(&name)
   fmt.Printf("Oi, %s! Eu sou a linguagem Go! ", name)
 }
+```
+```bash
 8. nano dockerfile 
 FROM golang as exec
 
@@ -184,12 +202,14 @@ ENTRYPOINT ./app.go
 10. docker images 
 11. o app-go deverá ser listado 
 12. docker run -ti --name meuappOK app-go:1.0
+```
 
-### 3. Construindo uma rede Docker para comunicação entre containers
+### 3. Construindo uma rede Docker para comunicação entre containers NAO RODOU 
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
 
 ### Resolução:
+```bash
 1. mkdir node-mongo
 2. cd node-mongo
 3. nano docker-compose.yml
@@ -278,6 +298,7 @@ CMD ["node", "server.js"]
 9. ip a 
 10. abrir navegador
 11. ip:3000
+```
 
 ### 4. Criando um compose file para rodar uma aplicação com banco de dados
 Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
