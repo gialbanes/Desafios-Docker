@@ -1,4 +1,4 @@
-# Desafios-Docker
+# DevSecOps - Exercícios Docker 
 
 ## 🟢 Fácil
 ### 1. Rodando um container básico DEU CERTO 
@@ -7,6 +7,8 @@ Execute um container usando a imagem do Nginx e acesse a página padrão no nave
 🔹 Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
 
 ### Resolução:
+1. No seu computador, clone o repositório da landing page do TailwindCSS
+
 ``` bash
 1. docker pull nginx
 2. docker images
@@ -15,8 +17,10 @@ Execute um container usando a imagem do Nginx e acesse a página padrão no nave
 5. mkdir html
 6. cd html
 7. nano index.html
-8. colar o conteúdo da landing pafe do TailwindCSS
-9. nano docker file: FROM nginx:latest   COPY index.html /usr/share/nginx/html/index.html
+8. colar o conteúdo da landing page do TailwindCSS
+9. nano docker file: 
+    FROM nginx:latest   
+    COPY index.html /usr/share/nginx/html/index.html
 10. docker build -t nginx .
 11. docker run --name nginx -d -p 8080:80 meu-nginx
 12. docker ps
@@ -60,20 +64,26 @@ CMD ["/bin/bash", "/usr/local/bin/script.sh"]
 
 ### 3.Listando e removendo containers DEU CERTO 
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
+
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
 
 ### Resolução: 
 ```bash
 1. docker ps -a
-2. docker stop ubuntu
-3. docker rm ubuntu 
+2. docker stop <nome ou ID do container>
+3. docker rm <nome ou ID do container>
 ```
 
 ### 4.Criando um Dockerfile para uma aplicação simples em Python REVISAR
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
+
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
 
 ### Resolução: 
+Criei um aplicação que pergunta ao usuário o seu nome e depois exibido na tela.
+
+Não entendi como usar a API de exemplo.
+
 ``` bash 
 1. docker pull python
 2. mkdir flask-app
@@ -126,9 +136,12 @@ CMD ["python", "app.py"]
 ## 🟡 Médio
 ### 1. Criando e utilizando volumes para persistência de dados DEU CERTO 
 Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
+
 🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
 
 ### Resolução:
+Criei um container Docker e, dentro dele, configurei um banco de dados com uma tabela e inseri alguns dados. Posteriormente, apaguei esse container e criei um novo. Ao acessar o novo container, verifiquei se as informações ainda estavam disponíveis
+
 ```bash
 1. docker pull mysql
 2. docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
@@ -155,20 +168,25 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 
 ### 2. Criando e rodando um container multi-stage DEU CERTO 
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
+
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
 
 ### Resolução
+Nesse exercício criei uma aplicação que pergunta ao usuário o seu nome e depois exibe na tela uma mensagem com o nome informado.
+
+O link do exemplo não foi encontrado. 
+
 ```bash
-1. mkdir go
-2. cd go
-3. docker pull golang
-4. dcoker pull alpine
-5. docker images
+1. docker pull golang
+2. docker pull alpine
+3. docker images
+4. mkdir go
+5. cd go
 6. nano app.go
 ```
 
 ```go 
-7. package main
+package main
 import (
     "fmt"
 )
@@ -182,110 +200,103 @@ func main() {
 ```
 ```bash
 8. nano dockerfile 
-FROM golang as exec
-
-COPY app.go /go/src/app/
-
-ENV GO111MODULE=auto
-
-WORKDIR /go/src/app
-
-RUN go build -o app.go .
-
-FROM alpine
-
-WORKDIR /appexec
-COPY --from=exec /go/src/app/ /appexec
-RUN chmod -R 755 /appexec
-ENTRYPOINT ./app.go
+    FROM golang as exec
+    COPY app.go /go/src/app/
+    ENV GO111MODULE=auto
+    WORKDIR /go/src/app
+    RUN go build -o app.go .
+    FROM alpine
+    WORKDIR /appexec
+    COPY --from=exec /go/src/app/ /appexec
+    RUN chmod -R 755 /appexec
+    CMD ./app.go
 9. docker image build . -t app-go:1.0
-10. docker images 
-11. o app-go deverá ser listado 
-12. docker run -ti --name meuappOK app-go:1.0
+10. docker images  
+11. docker run -ti --name meuappOK app-go:1.0
 ```
 
 ### 3. Construindo uma rede Docker para comunicação entre containers RODOU MAS TEM QUE REVISAR O CÓDIGO
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
+
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
 
 ### Resolução:
+Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além disso, no terminal, é exibida uma mensagem informando que o Node está rodando na porta especificada e que a conexão com o MongoDB foi estabelecida com sucesso.
+
 ```bash
 1. mkdir node-mongo
 2. cd node-mongo
 3. nano docker-compose.yml
-4. version: '3.8'
+    version: '3.8'
 
-services:
-  mongo:
-    image: mongo:4.4
-    container_name: mongo
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=giovana
-      - MONGO_INITDB_ROOT_PASSWORD=teste
-    ports:
-      - "27017:27017"
+    services:
+      mongo:
+        image: mongo:4.4
+        container_name: mongo
+        environment:
+          - MONGO_INITDB_ROOT_USERNAME=giovana
+          - MONGO_INITDB_ROOT_PASSWORD=teste
+        ports:
+          - "27017:27017"
+        volumes:
+          - mongo-data:/data/db
+        networks:
+          - minha-rede
+
+      node:
+        build: ./app-node
+        container_name: node
+        networks:
+          - minha-rede
+        environment:
+          - MONGO_URI=mongodb://giovana:teste@mongo:27017/meu-banco?authSource=admin
+        ports:
+          - "3000:3000"
+        depends_on:
+          - mongo
+
+    networks:
+      minha-rede:
+        driver: bridge
+
     volumes:
-      - mongo-data:/data/db
-    networks:
-      - minha-rede
-
-  node:
-    build: ./app-node
-    container_name: node
-    networks:
-      - minha-rede
-    environment:
-      - MONGO_URI=mongodb://giovana:teste@mongo:27017/meu-banco?authSource=admin
-    ports:
-      - "3000:3000"
-    depends_on:
-      - mongo
-
-networks:
-  minha-rede:
-    driver: bridge
-
-volumes:
-  mongo-data:
+      mongo-data:
 
 
 5. mkdir app-node
 6. cd app-node
 7. nano app.js
-const express = require("express");
-const mongoose = require("mongoose");
+    const express = require("express");
+    const mongoose = require("mongoose");
 
-const app = express();
+    const app = express();
 
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log("Conectado ao MongoDB!");
-}).catch((err) => {
-    console.error("Erro de conexão com o MongoDB", err);
-});
+    mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then(() => {
+        console.log("Conectado ao MongoDB!");
+    }).catch((error) => {
+        console.error("Erro de conexão com o MongoDB", error);
+    });
 
-// Configuração de uma rota simples
-app.get("/", (req, res) => {
-    res.send("Olá, Mundo!");
-});
+    app.get("/", (req, res) => {
+        res.send("Olá, Mundo!");
+    });
 
-// Definição da porta
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-});
+    const port = 3000;
+    app.listen(port, () => {
+        console.log(`Servidor rodando na porta ${port}`);
+    });
 
 7. nano dockerfile 
-
-FROM node:14  
-WORKDIR /app
-COPY . .
-RUN echo '{"name": "app-node","version": "1.0.0","main": "app.js","scripts": {"start": "node app.js"},"dependencies": {"express": "^4.17.1", "mongoose": "^5.10.9"}}' > package.json
-RUN npm install
-EXPOSE 3000
-CMD ["node", "app.js"]
+    FROM node:14  
+    WORKDIR /app
+    COPY . .
+    RUN echo '{"name": "app-node","version": "1.0.0","main": "app.js","scripts": {"start": "node app.js"},"dependencies": {"express": "^4.17.1", "mongoose": "^5.10.9"}}' > package.json
+    RUN npm install
+    EXPOSE 3000
+    CMD ["node", "app.js"]
 
 8. docker-compose up -d
 9. ip a 
@@ -295,4 +306,5 @@ CMD ["node", "app.js"]
 
 ### 4. Criando um compose file para rodar uma aplicação com banco de dados
 Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
+
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
