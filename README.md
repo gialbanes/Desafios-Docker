@@ -204,7 +204,7 @@ ENTRYPOINT ./app.go
 12. docker run -ti --name meuappOK app-go:1.0
 ```
 
-### 3. Construindo uma rede Docker para comunicação entre containers NAO RODOU 
+### 3. Construindo uma rede Docker para comunicação entre containers RODOU MAS TEM QUE REVISAR O CÓDIGO
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
 
@@ -213,22 +213,21 @@ Crie uma rede Docker personalizada e faça dois containers, um Node.js e um Mong
 1. mkdir node-mongo
 2. cd node-mongo
 3. nano docker-compose.yml
-4. root@docker:~/node-mongo# cat docker-compose.yml
-version: '3.8'
+4. version: '3.8'
 
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: mongo
-    networks:
-      - minha-rede
-    volumes:
-      - mongo-data:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_INITDB_ROOT_USERNAME=giovana
+      - MONGO_INITDB_ROOT_PASSWORD=teste
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - minha-rede
 
   node:
     build: ./app-node
@@ -236,7 +235,7 @@ services:
     networks:
       - minha-rede
     environment:
-      - MONGO_URI=mongodb://root:rootpassword@mongo-container:27017
+      - MONGO_URI=mongodb://giovana:teste@mongo:27017/meu-banco?authSource=admin
     ports:
       - "3000:3000"
     depends_on:
@@ -248,52 +247,46 @@ networks:
 
 volumes:
   mongo-data:
+
+
 5. mkdir app-node
 6. cd app-node
 7. nano app.js
-import express from "express";
-import mongoose from "mongoose";
+const express = require("express");
+const mongoose = require("mongoose");
+
 const app = express();
 
-const mongoUri = process.env.MONGO_URI;
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log("Conectado ao MongoDB!");
+}).catch((err) => {
+    console.error("Erro de conexão com o MongoDB", err);
+});
 
-mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Conexão com o MongoDB estabelecida!');
-  })
-  .catch(error => {
-    console.log('Conexão com o MongoDB falhou:', error);
-  });
-
+// Configuração de uma rota simples
 app.get("/", (req, res) => {
-        res.send("Olá! O mini projeto com Node e Mongo funcionou!");
-  });
+    res.send("Olá, Mundo!");
+});
 
+// Definição da porta
 const port = 3000;
-app.listen(port, (error) => {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(`API rodando em http://localhost:${port}.`);
-  }
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
+});
+
 7. nano dockerfile 
-Usando a imagem base do Node.js
-FROM node:14
 
-Defina o diretório de trabalho
+FROM node:14  
 WORKDIR /app
-
-Copie os arquivos do projeto para o container
 COPY . .
-
-Instale as dependências
-RUN npm install express mongoose
-
-Exponha a porta 3000
+RUN echo '{"name": "app-node","version": "1.0.0","main": "app.js","scripts": {"start": "node app.js"},"dependencies": {"express": "^4.17.1", "mongoose": "^5.10.9"}}' > package.json
+RUN npm install
 EXPOSE 3000
+CMD ["node", "app.js"]
 
-Defina o comando para rodar o app
-CMD ["node", "server.js"]
 8. docker-compose up -d
 9. ip a 
 10. abrir navegador
