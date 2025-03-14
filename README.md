@@ -9,25 +9,46 @@ Execute um container usando a imagem do Nginx e acesse a página padrão no nave
 ### Resolução:
 1. No seu computador, clone o repositório da landing page do TailwindCSS
 
+Baixa a imagem do Nginx
 ``` bash
-1. docker pull nginx
-2. docker images
-3. mkdir nginx
-4. cd nginx
-5. mkdir html
-6. cd html
-7. nano index.html
-8. colar o conteúdo da landing page do TailwindCSS
-9. nano docker file: 
-    FROM nginx:latest   
-    COPY index.html /usr/share/nginx/html/index.html
-10. docker build -t nginx .
-11. docker run --name nginx -d -p 8080:80 meu-nginx
-12. docker ps
-13. ip a
-14. abrir o navegador
-15. IP:8080
+docker pull nginx
 ```
+Verifica se a imagem do Nginx foi baixada 
+```bash
+docker images
+```
+
+Cria a pasta com o arquivo index.html. Dentro dele, cole o conteúdo da página que você quer exibir
+```bash
+mkdir nginx
+cd nginx
+mkdir html
+cd html
+nano index.html
+```
+
+Cria o arquivo dockerfile com o seguinte conteúdo:  
+```bash
+nano docker file
+FROM nginx:latest   
+COPY index.html /usr/share/nginx/html/index.html
+```
+
+Construa a imagem
+```bash
+docker build -t nginx .
+```
+
+Cria o container 
+```bash
+docker run --name nginx -d -p 8080:80 meu-nginx
+```
+Verifica o IP do container
+```bash
+ip a
+```
+No navegador, acesse a página pelo IP
+- IP:8080
 
 ### 2. Criando e rodando um container interativo DEU CERTO MAS REVISAR
 Inicie um container Ubuntu e interaja com o terminal dele.
@@ -64,10 +85,19 @@ Liste todos os containers em execução e parados, pare um container em execuç�
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
 
 ### Resolução: 
+Lista todos os container:
 ```bash
-1. docker ps -a
-2. docker stop <nome ou ID do container>
-3. docker rm <nome ou ID do container>
+docker ps -a
+```
+
+Para um container em execução 
+```bash
+docker stop <nome ou ID do container>
+``` 
+
+Remove um container
+```bash
+docker rm <nome ou ID do container>
 ```
 
 ### 4.Criando um Dockerfile para uma aplicação simples em Python 
@@ -80,11 +110,16 @@ Criei um aplicação que pergunta ao usuário o seu nome e depois exibido na tel
 
 Não entendi como usar a API de exemplo.
 
+Baixa a imagem do python
 ``` bash 
-1. docker pull python
-2. mkdir flask-app
-3. cd flask-app
-4. nano app.py
+docker pull python
+```
+
+Cria uma pasta e dentro dela a aplicação Python utilizando o Flask
+```bash
+mkdir flask-app
+cd flask-app
+nano app.py
 ```
 ```python
 from flask import Flask
@@ -98,21 +133,33 @@ def hello_world():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 ```
+
+Cria o dockerfile com o seguinte conteúdo:
 ```bash
-6. nano dockerfile 
+nano dockerfile 
 FROM python:3.9-slim
 WORKDIR /app
 COPY app.py .
 RUN pip install flask
 EXPOSE 5000
 CMD ["python", "app.py"]
-
-8. docker build -t flask-app . 
-9. docker run -d -p 5000:5000 --name flask-container flask-app
-10. ip a 
-11. abrir o navegador
-12. IP:5000
 ```
+
+Construa a imagem
+```bash
+docker build -t flask-app . 
+```
+
+Cria o conteiner
+```bash
+docker run -d -p 5000:5000 --name flask-container flask-app
+```
+Verifica o IP
+```bash
+ip a 
+```
+No navegador, acesse a página pelo IP
+- IP:5000
 
 ## 🟡 Médio
 ### 5. Criando e utilizando volumes para persistência de dados 
@@ -123,28 +170,49 @@ Execute um container MySQL e configure um volume para armazenar os dados do banc
 ### Resolução:
 Criei um container Docker e, dentro dele, configurei um banco de dados com uma tabela e inseri alguns dados. Posteriormente, apaguei esse container e criei um novo. Ao acessar o novo container, verifiquei se as informações ainda estavam disponíveis
 
+Baixa a imagem do MySQL
 ```bash
-1. docker pull mysql
-2. docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
-3. docker ps
-4. docker exec -it mysql-A mysql -uroot -p
+docker pull mysql
+```
+
+Cria um container com base na imagem do MySQL
+```bash
+docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
+```
+
+Entra no container criado 
+```bash
+docker exec -it mysql-A mysql -uroot -p
 ```
 
 ### Testando a resolução anterior
+Cria um database, uma tabela e faz a inserção de dados nela 
 ```bash
-1. create database teste;
-2. use teste;
-3. create table usuarios (id int primary key AUTO_INCREMENT, nome varchar(50));
-4. insert into usuarios(nome) values ("Giovana");
-5. exit
-6. docker stop mysql-A
-7. docker rm mysql-A
-8. docker run -d --name mysql-B -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
-9. docker ps
-10. docker exec -it mysql-B mysql -uroot -p
-11. show databases;
-12. use teste;
-13. select * from usuarios;
+create database teste;
+use teste;
+create table usuarios (id int primary key AUTO_INCREMENT, nome varchar(50));
+insert into usuarios(nome) values ("Giovana");
+exit
+```
+
+Para e apaga o container mysql-A
+```bash
+docker stop mysql-A
+docker rm mysql-A
+```
+
+Cria outro container no mesmo volume do anterior, e entra nele
+```bash
+docker run -d --name mysql-B -e MYSQL_ROOT_PASSWORD=Senha123 -p 3306:3306 -v /data/mysql-A:/var/lib/mysql mysql:latest
+
+docker exec -it mysql-B mysql -uroot -p
+```
+
+Pede para mostrar os databases existentes, logo, o "teste" estará presente
+```bash
+show databases;
+use teste;
+select * from usuarios;
 ```
 
 ### 6. Criando e rodando um container multi-stage DEU CERTO E NÃO PRECISA REVISAR
@@ -157,13 +225,17 @@ Nesse exercício criei uma aplicação que pergunta ao usuário o seu nome e dep
 
 O link do exemplo não foi encontrado. 
 
+Baixa a imagem do Go e Alpine
 ```bash
-1. docker pull golang
-2. docker pull alpine
-3. docker images
-4. mkdir go
-5. cd go
-6. nano app.go
+docker pull golang
+docker pull alpine
+```
+
+Cria a pasta e o arquivo app.go dentro
+```bash
+mkdir go
+cd go
+nano app.go
 ```
 
 ```go 
@@ -179,8 +251,10 @@ func main() {
   fmt.Printf("Oi, %s! Eu sou a linguagem Go! ", name)
 }
 ```
+
+Cria o arquivo dockerfile com o seguinte contúdo:
 ```bash
-8. nano dockerfile 
+nano dockerfile 
     FROM golang as exec
     COPY app.go /go/src/app/
     ENV GO111MODULE=auto
@@ -191,9 +265,16 @@ func main() {
     COPY --from=exec /go/src/app/ /appexec
     RUN chmod -R 755 /appexec
     CMD ./app.go
-9. docker image build . -t app-go:1.0
-10. docker images  
-11. docker run -ti --name meuappOK app-go:1.0
+```
+
+Cria a imagem
+```bash
+docker image build . -t app-go:1.0
+```
+
+Executa o container com base na imagem criada
+```bash
+docker run -ti --name meuappOK app-go:1.0
 ```
 
 ### 7. Construindo uma rede Docker para comunicação entre containers 
@@ -204,6 +285,7 @@ Crie uma rede Docker personalizada e faça dois containers, um Node.js e um Mong
 ### Resolução:
 Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além disso, no terminal, é exibida uma mensagem informando que o Node está rodando na porta especificada e que a conexão com o MongoDB foi estabelecida com sucesso.
 
+Cria a pasta e o arquivo docker-compose.yml
 ```bash
 1. mkdir node-mongo
 2. cd node-mongo
@@ -242,11 +324,13 @@ Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além di
 
     volumes:
       mongo-data:
+```
 
-
-5. mkdir app-node
-6. cd app-node
-7. nano app.js
+Cria a pasta app-node dentro da node-mongo com o arquivo app.js
+```bash
+mkdir app-node
+cd app-node
+nano app.js
     const express = require("express");
     const mongoose = require("mongoose");
 
@@ -269,8 +353,11 @@ Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além di
     app.listen(port, () => {
         console.log(`Servidor rodando na porta ${port}`);
     });
+```
 
-7. nano dockerfile 
+Cria o dockerfile com o seguinte conteúdo:
+```bash
+nano dockerfile 
     FROM node:14  
     WORKDIR /app
     COPY . .
@@ -278,12 +365,19 @@ Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além di
     RUN npm install
     EXPOSE 3000
     CMD ["node", "app.js"]
+```
 
-8. docker-compose up -d
-9. ip a 
-10. abrir navegador
-11. ip:3000
-12. docker logs node
+Inicia os containers definidos no docker-compose.yml em segundo plano
+```bash
+docker-compose up -d
+```
+
+Abra o navegador com IP:3000
+
+Verifica os logs
+```bash
+docker logs node
+docker logs mongo
 ```
 
 ### 8. Criando um compose file para rodar uma aplicação com banco de dados
@@ -356,24 +450,44 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
 
 ```
 
-
+Dentro da pasta do projeto, instale:
 ```BASH
-1. apt install python3-venv
-2. python3 -m venv django
-3. source django/bin/activate
-4. pip install django
-5. django-admin startproject desafio
-6. cd desafio
+apt install python3-venv
+```
+
+Crie o ambiente e entre nele
+```bash
+python3 -m venv django
+source django/bin/activate
+```
+
+Instale o DJANGO
+```bash
+pip install django
+```
+
+Inicie o projeto e entre nele
+``` bash 
+django-admin startproject desafio
+cd desafio
+```
+
 7. python manage.py startapp polls
-8. nano settings.py
+
+Entre na pasta poll e adicione o seguinte dentro do arquivo settings.py
+```bash
+nano settings.py
     INSTALLED_APPS = [
         ...
         'polls',
     ]
+```
 
-9. cd ..
-10. pip install psycopg2-binary
-11. nano settings.py
+Fora do diretório, instale o Psyco e edite o arquivo settings.py novamente
+```bash
+cd ..
+pip install psycopg2-binary
+nano settings.py
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -384,9 +498,13 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
             'PORT': '5432',
         }
     }
+```
 
-12. cd desafio
-13. nano docker-compose.yml
+Dentro do projeto crie o docker-compose.yml
+```bash
+cd desafio
+
+nano docker-compose.yml
     version: '3.8'
 
     services:
@@ -418,27 +536,44 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
 
     networks:
       minha-rede:
+```
 
-
-14. nano Dockerfile
+Crie o arquivo dockerfile com o seguinte conteúdo:
+```bash
+nano Dockerfile
     FROM python:3.9-slim
     WORKDIR /app
     COPY requirements.txt .
     RUN pip install --no-cache-dir -r requirements.txt
     COPY . .
     EXPOSE 8000
+```
 
-15. nano requirements.txt
+Crie o arquivo requirements.txt com o seguinte conteúdo:
+```bash
+nano requirements.txt
     Django==3.2
     psycopg2-binary==2.9.3
+```
 
-16. docker-compose up --build
-17. Abra um novo terminal e navegue até o diretório desafio.
+Construa o projeto
+```bash
+docker-compose up --build
+```
 
-18. docker-compose exec web python manage.py migrate
-19. Acessar a página do Django via navegador http://localhost:8000.
 
-20. docker-compose exec db psql -U felipe -d db
+Abra um novo terminal e navegue até o diretório desafio.
+
+Migra o banco de dados dentro do container de acordo com as mudanças do Django
+```bash
+docker-compose exec web python manage.py migrate
+```
+
+Acessar a página do Django via navegador http://localhost:8000.
+
+Por fim, faça o teste com o banco de dados:
+```bash
+docker-compose exec db psql -U felipe -d db
 ```
 
 
@@ -452,18 +587,32 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
 🔹 Exemplo de aplicação: Utilize a landing page do Creative Tim para criar uma página moderna hospedada no container.
 
 ### Resolução:
+Baixa a imagem do apache
 ```bash
-1. mkdir apache
-2. cd apache 
-3. nano dockerfile 
+docker pull apache
+```
+
+Crie a pasta com o dockerfile e o seguinte conteúdo:
+```bash
+mkdir apache
+cd apache 
+nano dockerfile 
     FROM httpd:alpine
     RUN apk update && apk add git
     RUN rm -rf /usr/local/apache2/htdocs/*
     RUN git clone https://github.com/creativetimofficial/material-kit.git /usr/local/apache2/htdocs
     EXPOSE 80
-4. docker build -t apache-material-kit .
-5. docker run -d -p 8080:80 apache-material-kit
 ```
 
-6. abrir navegador
-7. IP:8080
+Construa a imagem
+```bash
+docker build -t apache-material-kit .
+```
+
+Execute o container
+```bash
+docker run -d -p 8080:80 apache-material-kit
+```
+
+No navegador, acesse a página pelo IP
+- IP:8080
