@@ -308,3 +308,33 @@ Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além di
 Utilize Docker Compose para configurar uma aplicação Django com um banco de dados PostgreSQL.
 
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
+
+### Resolução:
+O link deu como Not Found pra mim. 
+
+
+
+
+## 🔴 Difícil
+
+### 9. Criando uma imagem personalizada com um servidor web e arquivos estáticos
+- Construa uma imagem baseada no Nginx ou Apache, adicionando um site HTML/CSS estático.
+
+🔹 Exemplo de aplicação: Utilize a landing page do Creative Tim para criar uma página moderna hospedada no container.
+
+### Resolução:
+```bash
+1. mkdir apache
+2. cd apache 
+3. nano dockerfile 
+    FROM httpd:alpine
+    RUN apk update && apk add git
+    RUN rm -rf /usr/local/apache2/htdocs/*
+    RUN git clone https://github.com/creativetimofficial/material-kit.git /usr/local/apache2/htdocs
+    EXPOSE 80
+4. docker build -t apache-material-kit .
+5. docker run -d -p 8080:80 apache-material-kit
+```
+
+6. abrir navegador
+7. IP:8080
