@@ -147,7 +147,7 @@ Criei um container Docker e, dentro dele, configurei um banco de dados com uma t
 13. select * from usuarios;
 ```
 
-### 6. Criando e rodando um container multi-stage DEU CERTO E NÃO PRECISA REVISAR
+### 6. Criando e rodando um container multi-stage 
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
