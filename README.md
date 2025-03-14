@@ -87,39 +87,24 @@ Não entendi como usar a API de exemplo.
 4. nano app.py
 ```
 ```python
-5. from flask import Flask
-from flask_restful import Api, Resource
+from flask import Flask
 
 app = Flask(__name__)
-api = Api(app)
 
-class HelloWorld(Resource):
-    def get(self):
-        return {'message': 'Hello, World!'}
-
-api.add_resource(HelloWorld, '/hello')
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 ```
 ```bash
 6. nano dockerfile 
-Usando a imagem base do Python
 FROM python:3.9-slim
-
-Defina o diretório de trabalho no container
 WORKDIR /app
-
-Copie o código da aplicação para dentro do container
 COPY app.py .
-
-Instale o Flask diretamente no container
 RUN pip install flask
-
-Exponha a porta 5000
 EXPOSE 5000
-
-Comando para rodar a aplicação Flask
 CMD ["python", "app.py"]
 
 8. docker build -t flask-app . 
