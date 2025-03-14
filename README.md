@@ -70,7 +70,7 @@ Liste todos os containers em execução e parados, pare um container em execuç�
 3. docker rm <nome ou ID do container>
 ```
 
-### 4.Criando um Dockerfile para uma aplicação simples em Python DEU CERTO MAS REVISAR
+### 4.Criando um Dockerfile para uma aplicação simples em Python 
 Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
 
 🔹 Exemplo de aplicação: Use a API de exemplo Flask Restful API Starter para criar um endpoint de teste.
@@ -115,7 +115,7 @@ CMD ["python", "app.py"]
 ```
 
 ## 🟡 Médio
-### 5. Criando e utilizando volumes para persistência de dados DEU CERTO E NÃO PRECISA REVISAR
+### 5. Criando e utilizando volumes para persistência de dados 
 Execute um container MySQL e configure um volume para armazenar os dados do banco de forma persistente.
 
 🔹 Exemplo de aplicação: Use o sistema de login e cadastro do Laravel Breeze, que usa MySQL.
@@ -134,7 +134,7 @@ Criei um container Docker e, dentro dele, configurei um banco de dados com uma t
 ```bash
 1. create database teste;
 2. use teste;
-3. create table usuarios (id int primary key, AUTO_INCREMENT, nome varchar(50));
+3. create table usuarios (id int primary key AUTO_INCREMENT, nome varchar(50));
 4. insert into usuarios(nome) values ("Giovana");
 5. exit
 6. docker stop mysql-A
