@@ -1,4 +1,12 @@
-# DevSecOps - Exercícios Docker 
+# PB - DevSecOps - Exercícios Docker 
+
+## Objetivos
+- Desenvolver e treinar habilidades no uso do Docker.
+
+## Requisitos
+- Docker
+- Internet
+- VM Debian com Docker instalado e configurado
 
 ## 🟢 Fácil
 ### 1. Rodando um container básico 
@@ -30,7 +38,10 @@ nano index.html
 Cria o arquivo dockerfile com o seguinte conteúdo:  
 ```bash
 nano docker file
-FROM nginx:latest   
+#usa imagem nginx
+FROM nginx:latest  
+
+#copia index.html para o servidor
 COPY index.html /usr/share/nginx/html/index.html
 ```
 
@@ -50,34 +61,73 @@ ip a
 No navegador, acesse a página pelo IP
 - IP:8080
 
-### 2. Criando e rodando um container interativo DEU CERTO MAS REVISAR
+### 2. Criando e rodando um container interativo 
 Inicie um container Ubuntu e interaja com o terminal dele.
 
 🔹 Exemplo de aplicação: Teste um script Bash que imprime logs do sistema ou instala pacotes de forma interativa.
 
 ### Resolução: 
+
+Baixa a imagem do Ubuntu
 ``` bash
-1. docker pull ubuntu
-2. docker run -it ubuntu bash
-3. apt update
-4. apt install -y curl -> Instalei um pacote de forma interativa
-5. exit
-6. mkdir ubuntu
-7. cd ubuntu
-8. nano script.sh
-9. #!/bin/bash
-echo "Testando o script..."
-10. nano dockerfile
-FROM ubuntu
-COPY script.sh /usr/local/bin/script.sh
-RUN chmod +x /usr/local/bin/script.sh
-CMD ["/bin/bash", "/usr/local/bin/script.sh"]
-11. docker build -t ubuntu .
-12. docker run --name meu-ubuntu -d -p 8080:80 ubuntu sleep 1500
-13. docker ps
-14. docker exec meu-ubuntu /bin/bash -c "/usr/local/bin/script.sh"
-15. a mensagem do script deve aparecer
+docker pull ubuntu
 ```
+
+Roda o container interativo  
+```
+docker run -it ubuntu bash
+```
+
+Atualiza e instala pacotes de forma interativa
+```bash 
+apt update
+apt install -y curl -> Instalei um pacote de forma interativa
+exit
+```
+
+Cria a pasta e o script.sh dentro
+```bash
+mkdir ubuntu
+cd ubuntu
+nano script.sh
+#!/bin/bash
+echo "Testando o script..."
+```
+
+Cria o dockerfile com o seguinte conteúdo:
+```bash 
+nano dockerfile
+# usa imagem ubuntu  
+FROM ubuntu  
+
+# copia script.sh para o diretório /usr/local/bin dentro do container  
+COPY script.sh /usr/local/bin/script.sh  
+
+# dá permissão de execução ao script  
+RUN chmod +x /usr/local/bin/script.sh  
+
+# define o comando padrão ao iniciar o container  
+CMD ["/bin/bash", "/usr/local/bin/script.sh"]  
+
+```
+
+Cria a imagem
+```bash
+docker build -t ubuntu .
+```
+
+Executa o container 
+```bash
+docker run --name meu-ubuntu -d -p 8080:80 ubuntu sleep 1500
+```
+
+Entra no container
+```bash
+docker exec meu-ubuntu /bin/bash -c "/usr/local/bin/script.sh"
+```
+
+A mensagem do script deve aparecer
+
 
 ### 3.Listando e removendo containers 
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
@@ -137,12 +187,23 @@ if __name__ == '__main__':
 Cria o dockerfile com o seguinte conteúdo:
 ```bash
 nano dockerfile 
-FROM python:3.9-slim
-WORKDIR /app
-COPY app.py .
-RUN pip install flask
-EXPOSE 5000
-CMD ["python", "app.py"]
+# usa a imagem python 3.9 slim  
+FROM python:3.9-slim  
+
+# define o diretório de trabalho dentro do container  
+WORKDIR /app  
+
+# copia o arquivo app.py para o diretório de trabalho  
+COPY app.py .  
+
+# instala a dependência Flask  
+RUN pip install flask  
+
+# expõe a porta 5000 para acesso externo  
+EXPOSE 5000  
+
+# define o comando padrão para rodar a aplicação  
+CMD ["python", "app.py"]  
 ```
 
 Construa a imagem
@@ -215,7 +276,7 @@ use teste;
 select * from usuarios;
 ```
 
-### 6. Criando e rodando um container multi-stage DEU CERTO E NÃO PRECISA REVISAR
+### 6. Criando e rodando um container multi-stage 
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
@@ -255,16 +316,36 @@ func main() {
 Cria o arquivo dockerfile com o seguinte contúdo:
 ```bash
 nano dockerfile 
-    FROM golang as exec
-    COPY app.go /go/src/app/
-    ENV GO111MODULE=auto
-    WORKDIR /go/src/app
-    RUN go build -o app.go .
-    FROM alpine
-    WORKDIR /appexec
-    COPY --from=exec /go/src/app/ /appexec
-    RUN chmod -R 755 /appexec
-    CMD ./app.go
+# usa a imagem golang como etapa de build  
+FROM golang as exec  
+
+# copia o arquivo app.go para o diretório de código-fonte do Go  
+COPY app.go /go/src/app/  
+
+# define a variável de ambiente para o gerenciamento de módulos Go  
+ENV GO111MODULE=auto  
+
+# define o diretório de trabalho dentro do container  
+WORKDIR /go/src/app  
+
+# compila o código-fonte e gera o binário app.go  
+RUN go build -o app.go .  
+
+# usa a imagem Alpine para o container final  
+FROM alpine  
+
+# define o diretório de trabalho dentro do container  
+WORKDIR /appexec  
+
+# copia o binário compilado da etapa anterior para o novo container  
+COPY --from=exec /go/src/app/ /appexec  
+
+# define permissões para o diretório de execução  
+RUN chmod -R 755 /appexec  
+
+# define o comando padrão para rodar a aplicação  
+CMD ./app.go  
+
 ```
 
 Cria a imagem
@@ -290,40 +371,58 @@ Cria a pasta e o arquivo docker-compose.yml
 1. mkdir node-mongo
 2. cd node-mongo
 3. nano docker-compose.yml
-    version: '3.8'
+# define a versão do Docker Compose  
+version: '3.8'  
 
-    services:
-      mongo:
-        image: mongo:4.4
-        container_name: mongo
-        environment:
-          - MONGO_INITDB_ROOT_USERNAME=giovana
-          - MONGO_INITDB_ROOT_PASSWORD=teste
-        ports:
-          - "27017:27017"
-        volumes:
-          - mongo-data:/data/db
-        networks:
-          - minha-rede
+services:  
+  # serviço do MongoDB  
+  mongo:  
+    # usa a imagem do MongoDB versão 4.4  
+    image: mongo:4.4  
+    # define o nome do container  
+    container_name: mongo  
+    # configura variáveis de ambiente para autenticação  
+    environment:  
+      - MONGO_INITDB_ROOT_USERNAME=giovana  
+      - MONGO_INITDB_ROOT_PASSWORD=teste  
+    # mapeia a porta 27017 do container para a máquina host  
+    ports:  
+      - "27017:27017"  
+    # define um volume para persistência de dados  
+    volumes:  
+      - mongo-data:/data/db  
+    # conecta o container à rede personalizada  
+    networks:  
+      - minha-rede  
 
-      node:
-        build: ./app-node
-        container_name: node
-        networks:
-          - minha-rede
-        environment:
-          - MONGO_URI=mongodb://giovana:teste@mongo:27017/meu-banco?authSource=admin
-        ports:
-          - "3000:3000"
-        depends_on:
-          - mongo
+  # serviço do Node.js  
+  node:  
+    # constrói a imagem a partir do diretório ./app-node  
+    build: ./app-node  
+    # define o nome do container  
+    container_name: node  
+    # conecta o container à rede personalizada  
+    networks:  
+      - minha-rede  
+    # configura a URI de conexão com o MongoDB  
+    environment:  
+      - MONGO_URI=mongodb://giovana:teste@mongo:27017/meu-banco?authSource=admin  
+    # mapeia a porta 3000 do container para a máquina host  
+    ports:  
+      - "3000:3000"  
+    # garante que o serviço do Node só inicie após o MongoDB  
+    depends_on:  
+      - mongo  
 
-    networks:
-      minha-rede:
-        driver: bridge
+# define a rede personalizada  
+networks:  
+  minha-rede:  
+    driver: bridge  
 
-    volumes:
-      mongo-data:
+# define o volume persistente para os dados do MongoDB  
+volumes:  
+  mongo-data:  
+
 ```
 
 Cria a pasta app-node dentro da node-mongo com o arquivo app.js
@@ -358,13 +457,27 @@ nano app.js
 Cria o dockerfile com o seguinte conteúdo:
 ```bash
 nano dockerfile 
-    FROM node:14  
-    WORKDIR /app
-    COPY . .
-    RUN echo '{"name": "app-node","version": "1.0.0","main": "app.js","scripts": {"start": "node app.js"},"dependencies": {"express": "^4.17.1", "mongoose": "^5.10.9"}}' > package.json
-    RUN npm install
-    EXPOSE 3000
-    CMD ["node", "app.js"]
+# usa a imagem do Node.js versão 14  
+FROM node:14  
+
+# define o diretório de trabalho dentro do container  
+WORKDIR /app  
+
+# copia todos os arquivos do diretório atual para o diretório de trabalho no container  
+COPY . .  
+
+# cria o arquivo package.json com as dependências e scripts  
+RUN echo '{"name": "app-node","version": "1.0.0","main": "app.js","scripts": {"start": "node app.js"},"dependencies": {"express": "^4.17.1", "mongoose": "^5.10.9"}}' > package.json  
+
+# instala as dependências definidas no package.json  
+RUN npm install  
+
+# expõe a porta 3000 para acesso externo  
+EXPOSE 3000  
+
+# define o comando padrão para rodar a aplicação  
+CMD ["node", "app.js"]  
+
 ```
 
 Inicia os containers definidos no docker-compose.yml em segundo plano
@@ -386,70 +499,6 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
 
 ### Resolução:
-```bash
-1. git clone https://github.com/devmahmud/Django-Poll-App.git
-2. cd Django-Poll-App
-3. nano docker-compose.yml
-    version: '3.8'
-
-    services:
-      db:
-        image: postgres:13
-        environment:
-          POSTGRES_DB: db
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-        volumes:
-          - postgres_data:/var/lib/postgresql/data/
-
-      web:
-        build: .
-        command: python manage.py runserver 0.0.0.0:8000
-        volumes:
-          - .:/code
-        ports:
-          - "8000:8000"
-        depends_on:
-          - db
-
-    volumes:
-      postgres_data:
-
-4. nano dockerfile
-    FROM python:3.9-slim
-    ENV PYTHONUNBUFFERED=1
-    WORKDIR /code
-    COPY . /code/
-    RUN pip install --no-cache-dir -r requirements.txt
-    CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"] 
-
-5. cd pollme
-6. ALLOWED_HOSTS = ['IP']
-7. DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pollsdb',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'db',
-        'PORT': '5432',
-    }
-}
-
-8. docker-compose up --build
-```
-
-8. abrir o navegador
-9. IP:8000
-
-```bash
-10. python manage.py shell
-11. python manage.py createsuperuser
-12. from django.contrib.auth.models import User
-13. User.objects.all()
-
-```
-
 Dentro da pasta do projeto, instale:
 ```BASH
 apt install python3-venv
@@ -472,7 +521,10 @@ django-admin startproject desafio
 cd desafio
 ```
 
-7. python manage.py startapp polls
+Cria uma nova aplicaçãp DJANGO
+```bash
+python manage.py startapp polls
+```
 
 Entre na pasta poll e adicione o seguinte dentro do arquivo settings.py
 ```bash
@@ -505,48 +557,74 @@ Dentro do projeto crie o docker-compose.yml
 cd desafio
 
 nano docker-compose.yml
-    version: '3.8'
+    # define a versão do Docker Compose  
+version: '3.8'  
 
-    services:
-      db:
-        image: postgres:13
-        volumes:
-          - postgres_data:/var/lib/postgresql/data
-        environment:
-          POSTGRES_DB: db
-          POSTGRES_USER: giovana
-          POSTGRES_PASSWORD: teste
-        networks:
-          - minha-rede
+services:  
+  # serviço do banco de dados PostgreSQL  
+  db:  
+    # usa a imagem do PostgreSQL versão 13  
+    image: postgres:13  
+    # define um volume persistente para os dados do banco  
+    volumes:  
+      - postgres_data:/var/lib/postgresql/data  
+    # configura as variáveis de ambiente para o banco de dados  
+    environment:  
+      POSTGRES_DB: db  
+      POSTGRES_USER: giovana  
+      POSTGRES_PASSWORD: teste  
+    # conecta o container à rede personalizada  
+    networks:  
+      - minha-rede  
 
-      web:
-        build: .
-        command: python manage.py runserver 0.0.0.0:8000
-        volumes:
-          - .:/app
-        ports:
-          - "8000:8000"
-        depends_on:
-          - db
-        networks:
-          - minha-rede
+  # serviço da aplicação web  
+  web:  
+    # constrói a imagem a partir do Dockerfile no diretório atual  
+    build: .  
+    # define o comando para rodar a aplicação Django  
+    command: python manage.py runserver 0.0.0.0:8000  
+    # mapeia o diretório atual para /app dentro do container  
+    volumes:  
+      - .:/app  
+    # mapeia a porta 8000 do container para a máquina host  
+    ports:  
+      - "8000:8000"  
+    # garante que o serviço web só inicie após o banco de dados  
+    depends_on:  
+      - db  
+    # conecta o container à rede personalizada  
+    networks:  
+      - minha-rede  
 
-    volumes:
-      postgres_data:
+# define o volume persistente para os dados do PostgreSQL  
+volumes:  
+  postgres_data:  
 
-    networks:
-      minha-rede:
+# define a rede personalizada  
+networks:  
+  minha-rede:  
 ```
 
 Crie o arquivo dockerfile com o seguinte conteúdo:
 ```bash
 nano Dockerfile
-    FROM python:3.9-slim
-    WORKDIR /app
-    COPY requirements.txt .
-    RUN pip install --no-cache-dir -r requirements.txt
-    COPY . .
-    EXPOSE 8000
+# usa a imagem do Python 3.9 slim  
+FROM python:3.9-slim  
+
+# define o diretório de trabalho dentro do container  
+WORKDIR /app  
+
+# copia o arquivo requirements.txt para o diretório de trabalho no container  
+COPY requirements.txt .  
+
+# instala as dependências listadas no requirements.txt sem usar cache  
+RUN pip install --no-cache-dir -r requirements.txt  
+
+# copia todos os arquivos restantes para o diretório de trabalho no container  
+COPY . .  
+
+# expõe a porta 8000 para acesso externo  
+EXPOSE 8000  
 ```
 
 Crie o arquivo requirements.txt com o seguinte conteúdo:
@@ -597,11 +675,21 @@ Crie a pasta com o dockerfile e o seguinte conteúdo:
 mkdir apache
 cd apache 
 nano dockerfile 
-    FROM httpd:alpine
-    RUN apk update && apk add git
-    RUN rm -rf /usr/local/apache2/htdocs/*
-    RUN git clone https://github.com/creativetimofficial/material-kit.git /usr/local/apache2/htdocs
-    EXPOSE 80
+# usa a imagem do Apache baseada no Alpine  
+FROM httpd:alpine  
+
+# atualiza o APK e instala o git  
+RUN apk update && apk add git  
+
+# remove todos os arquivos existentes no diretório do Apache  
+RUN rm -rf /usr/local/apache2/htdocs/*  
+
+# clona o repositório do Material Kit para o diretório do Apache  
+RUN git clone https://github.com/creativetimofficial/material-kit.git /usr/local/apache2/htdocs  
+
+# expõe a porta 80 para acesso externo  
+EXPOSE 80  
+
 ```
 
 Construa a imagem
