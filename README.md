@@ -1,7 +1,7 @@
 # DevSecOps - Exercícios Docker 
 
 ## 🟢 Fácil
-### 1. Rodando um container básico DEU CERTO E NÃO PRECISA REVISAR
+### 1. Rodando um container básico 
 Execute um container usando a imagem do Nginx e acesse a página padrão no navegador.
 
 🔹 Exemplo de aplicação: Use a landing page do TailwindCSS como site estático dentro do container.
@@ -302,6 +302,7 @@ Criei uma aplicação que exibe a mensagem 'Hello World!' no navegador. Além di
 9. ip a 
 10. abrir navegador
 11. ip:3000
+12. docker logs node
 ```
 
 ### 8. Criando um compose file para rodar uma aplicação com banco de dados
@@ -310,14 +311,161 @@ Utilize Docker Compose para configurar uma aplicação Django com um banco de da
 🔹 Exemplo de aplicação: Use o projeto Django Polls App para criar uma pesquisa de opinião integrada ao banco.
 
 ### Resolução:
-O link deu como Not Found pra mim. 
+```bash
+1. git clone https://github.com/devmahmud/Django-Poll-App.git
+2. cd Django-Poll-App
+3. nano docker-compose.yml
+    version: '3.8'
+
+    services:
+      db:
+        image: postgres:13
+        environment:
+          POSTGRES_DB: db
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        volumes:
+          - postgres_data:/var/lib/postgresql/data/
+
+      web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+          - .:/code
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+
+    volumes:
+      postgres_data:
+
+4. nano dockerfile
+    FROM python:3.9-slim
+    ENV PYTHONUNBUFFERED=1
+    WORKDIR /code
+    COPY . /code/
+    RUN pip install --no-cache-dir -r requirements.txt
+    CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"] 
+
+5. cd pollme
+6. ALLOWED_HOSTS = ['IP']
+7. DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pollsdb',
+        'USER': 'user',
+        'PASSWORD': 'password',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
+
+8. docker-compose up --build
+```
+
+8. abrir o navegador
+9. IP:8000
+
+```bash
+10. python manage.py shell
+11. python manage.py createsuperuser
+12. from django.contrib.auth.models import User
+13. User.objects.all()
+
+```
+
+
+```BASH
+1. apt install python3-venv
+2. python3 -m venv django
+3. source django/bin/activate
+4. pip install django
+5. django-admin startproject desafio
+6. cd desafio
+7. python manage.py startapp polls
+8. nano settings.py
+    INSTALLED_APPS = [
+        ...
+        'polls',
+    ]
+
+9. cd ..
+10. pip install psycopg2-binary
+11. nano settings.py
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'db',
+            'USER': 'felipe',
+            'PASSWORD': '123',
+            'HOST': 'db',
+            'PORT': '5432',
+        }
+    }
+
+12. cd desafio
+13. nano docker-compose.yml
+    version: '3.8'
+
+    services:
+      db:
+        image: postgres:13
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+        environment:
+          POSTGRES_DB: db
+          POSTGRES_USER: giovana
+          POSTGRES_PASSWORD: teste
+        networks:
+          - minha-rede
+
+      web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+          - .:/app
+        ports:
+          - "8000:8000"
+        depends_on:
+          - db
+        networks:
+          - minha-rede
+
+    volumes:
+      postgres_data:
+
+    networks:
+      minha-rede:
+
+
+14. nano Dockerfile
+    FROM python:3.9-slim
+    WORKDIR /app
+    COPY requirements.txt .
+    RUN pip install --no-cache-dir -r requirements.txt
+    COPY . .
+    EXPOSE 8000
+
+15. nano requirements.txt
+    Django==3.2
+    psycopg2-binary==2.9.3
+
+16. docker-compose up --build
+17. Abra um novo terminal e navegue até o diretório desafio.
+
+18. docker-compose exec web python manage.py migrate
+19. Acessar a página do Django via navegador http://localhost:8000.
+
+20. docker-compose exec db psql -U felipe -d db
+```
 
 
 
 
 ## 🔴 Difícil
 
-### 9. Criando uma imagem personalizada com um servidor web e arquivos estáticos
+### 9. Criando uma imagem personalizada com um servidor web e arquivos estáticos DEU CERTO E NÃO PRECISA REVISAR 
 - Construa uma imagem baseada no Nginx ou Apache, adicionando um site HTML/CSS estático.
 
 🔹 Exemplo de aplicação: Utilize a landing page do Creative Tim para criar uma página moderna hospedada no container.
