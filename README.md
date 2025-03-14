@@ -147,7 +147,7 @@ Criei um container Docker e, dentro dele, configurei um banco de dados com uma t
 13. select * from usuarios;
 ```
 
-### 6. Criando e rodando um container multi-stage 
+### 6. Criando e rodando um container multi-stage DEU CERTO E NÃO PRECISA REVISAR
 Utilize um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final.
 
 🔹 Exemplo de aplicação: Compile e rode a API do Go Fiber Example dentro do container.
@@ -196,7 +196,7 @@ func main() {
 11. docker run -ti --name meuappOK app-go:1.0
 ```
 
-### 7. Construindo uma rede Docker para comunicação entre containers DEU CERTO MAS TEM QUE REVISAR
+### 7. Construindo uma rede Docker para comunicação entre containers 
 Crie uma rede Docker personalizada e faça dois containers, um Node.js e um MongoDB, se comunicarem.
 
 🔹 Exemplo de aplicação: Utilize o projeto MEAN Todos para criar um app de tarefas usando Node.js + MongoDB.
