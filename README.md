@@ -45,24 +45,20 @@ Inicie um container Ubuntu e interaja com o terminal dele.
 7. cd ubuntu
 8. nano script.sh
 9. #!/bin/bash
-echo "Este é um script de exemplo."
+echo "Testando o script..."
 10. nano dockerfile
 FROM ubuntu
-RUN apt-get update && apt-get install -y curl
 COPY script.sh /usr/local/bin/script.sh
 RUN chmod +x /usr/local/bin/script.sh
 CMD ["/bin/bash", "/usr/local/bin/script.sh"]
-11. docker buil -t ubuntu .
-12. docker run --name ubuntu -d -p 8080:80 meu-ubuntu
+11. docker build -t ubuntu .
+12. docker run --name meu-ubuntu -d -p 8080:80 ubuntu sleep 1500
 13. docker ps
-14. docker logs ubuntu
+14. docker exec meu-ubuntu /bin/bash -c "/usr/local/bin/script.sh"
 15. a mensagem do script deve aparecer
-16. docker exec -it meu-ubuntu bash
-17. /usr/local/bin/script.sh
-18. curl --version
 ```
 
-### 3.Listando e removendo containers DEU CERTO E NAO PRECISA REVISAR
+### 3.Listando e removendo containers 
 Liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
 
 🔹 Exemplo de aplicação: Gerenciar containers de testes criados para verificar configurações ou dependências.
